@@ -1,116 +1,65 @@
-const Repair = require("../models/repair.model")
+const Repair = require('../models/repair.model');
+const catchAsync = require('../utils/catchAsync');
 
-exports.allMotorcyclePending = async (req, res) => {
-
- try {
-  
+exports.allMotorcyclePending = catchAsync(async (req, res, next) => {
   const allMotorcycle = await Repair.findAll({
-    where:{
-      status: 'pending'
-    }
-  })
-   res.status(200).json({
+    where: {
+      status: 'pending',
+    },
+  });
+  res.status(200).json({
     status: 'success',
     message: 'Find all Users',
-    allMotorcycle
-  })
- 
- } catch (error) {
-  console.log(error)
-  return res.status(500).json({
-    status: 'fail',
-    message: 'Internal Server error'
-  })
-  
-}
-}
-exports.findMotorcyclePending = async (req, res) => {
-   try {
-    
-    const { repair } = req
+    allMotorcycle,
+  });
+});
 
-    res.status(200).json({
-      status:'success',
-      message: 'Find Repair successfully',
-      repair
-    })
+exports.findMotorcyclePending = catchAsync(async (req, res, next) => {
+  const { repair } = req;
 
-   } catch (error) {
-    console.log(error)
-    return res.status(500).json({
-      status: 'fail',
-      message: 'Internal Server error'
-    })
-   }
-}
+  res.status(200).json({
+    status: 'success',
+    message: 'Find Repair successfully',
+    repair,
+  });
+});
 
-exports.newMotorcycleRepair = async (req, res) => {
-  try {
-    const {date, userId, status} = req.body
-  
+exports.newMotorcycleRepair = catchAsync(async (req, res, next) => {
+  const { date, userId, status } = req.body;
+
   const newMotorcycle = await Repair.create({
     date,
     status,
-    userId
-  })
+    userId,
+  });
 
   res.status(200).json({
-    status:'success',
-    message:'New motorcycle',
-    newMotorcycle
-  })
+    status: 'success',
+    message: 'New motorcycle',
+    newMotorcycle,
+  });
+});
 
-  } catch (error) {
-    console.log(error)
-    return res.status(500).json({
-      status: 'fail',
-      message: 'Internal Server error'
-    })
-  }
-  
-}
+exports.statusMotorcycle = catchAsync(async (req, res, next) => {
+  const { repair } = req;
 
-exports.statusMotorcycle = async (req, res) => {
-  try {
-    
-    const { repair } = req
+  const { status } = req.body;
 
-    const { status } = req.body
+  await repair.update({ status });
 
-    await repair.update({ status })
+  res.status(200).json({
+    status: 'success',
+    message: 'status actualized',
+  });
+});
 
-    res.status(200).json({
-      status: 'success',
-      message: 'status actualized',
-    })
+exports.cancelRepair = catchAsync(async (req, res, next) => {
+  const { repair } = req;
 
-  } catch (error) {
-    console.log(error)
-    return res.status(500).json({
-      status: 'fail',
-      message: 'Internal Server error'
-    })
-  }
- 
-}
+  await repair.update({ status: 'cancelled' });
 
-exports.cancelRepair = async (req, res) => {
-
-  try {
-    
-    const { repair }  = req
-
-    await repair.update({status: 'cancelled'})
-
-    res.status(200).json({
-      status: 'success',
-      message: 'repair cancelled'
-    })
-  } catch (error) {
-    console.log(error)
-    return res.status(500).json({
-      status: 'fail',
-      message: 'Internal Server error'
-    })
-  }
-}
+  res.status(200).json({
+    status: 'success',
+    message: 'repair cancelled',
+  });
+});

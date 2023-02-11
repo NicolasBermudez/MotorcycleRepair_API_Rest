@@ -1,28 +1,35 @@
-const { DataTypes } = require("sequelize");
-const { db } = require("../dataBase/db");
-
+const { DataTypes } = require('sequelize');
+const { db } = require('../dataBase/db');
 
 const Repair = db.define('repair', {
-  id:{
+  id: {
     primaryKey: true,
     autoIncrement: true,
     allowNull: false,
-    type: DataTypes.INTEGER
+    type: DataTypes.INTEGER,
   },
-  date:{
-    type:DataTypes.DATE,
+  date: {
+    type: DataTypes.DATE,
     allowNull: false,
+  },
+  //en uruguay y argentina los números de motor tienen letras tambien, por eso el tipo es STRING
+  motorNumber: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  description: {
+    type: DataTypes.STRING,
   },
   status: {
     type: DataTypes.STRING,
     allowNull: false,
-    defaultValue: 'pendig',
-    enum: ['pending', 'completed', 'cancelled']
+    defaultValue: 'pending',
+    enum: ['pending', 'completed', 'cancelled'],
   },
-  userId:{
+  userId: {
     type: DataTypes.INTEGER,
-    allowNull: false
-  }
-})
+    allowNull: false,
+  },
+});
 
-module.exports = Repair
+module.exports = Repair;
