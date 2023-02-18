@@ -1,4 +1,5 @@
 const Repair = require('../models/repair.model');
+const User = require('../models/user.model');
 const catchAsync = require('../utils/catchAsync');
 
 exports.allMotorcyclePending = catchAsync(async (req, res, next) => {
@@ -6,6 +7,7 @@ exports.allMotorcyclePending = catchAsync(async (req, res, next) => {
     where: {
       status: 'pending',
     },
+    include: [{ model: User }],
   });
   res.status(200).json({
     status: 'success',
@@ -25,12 +27,14 @@ exports.findMotorcyclePending = catchAsync(async (req, res, next) => {
 });
 
 exports.newMotorcycleRepair = catchAsync(async (req, res, next) => {
-  const { date, userId, status } = req.body;
+  const { date, userId, status, motorNumber, description } = req.body;
 
   const newMotorcycle = await Repair.create({
     date,
     status,
     userId,
+    motorNumber,
+    description,
   });
 
   res.status(200).json({
