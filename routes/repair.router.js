@@ -7,14 +7,22 @@ const {
   statusMotorcycle,
   cancelRepair,
 } = require('../controllers/repair.controller');
+const { protect, restrictTo } = require('../middlewares/auth.middleware');
 const { validRepairById } = require('../middlewares/repair.middlewares');
 const { validateFields } = require('../middlewares/validateField.middleware');
 
 const router = Router();
 
-router.get('/', allMotorcyclePending);
+router.use(protect);
 
-router.get('/:id', validRepairById, findMotorcyclePending);
+router.get('/', restrictTo('employee'), allMotorcyclePending);
+
+router.get(
+  '/:id',
+  restrictTo('employee'),
+  validRepairById,
+  findMotorcyclePending
+);
 
 router.post(
   '/',
@@ -34,10 +42,11 @@ router.patch(
   [
     check('status', 'The name must be mandatory').not().isEmpty(),
     validRepairById,
+    restrictTo('employee'),
   ],
   statusMotorcycle
 );
 
-router.delete('/:id', validRepairById, cancelRepair);
+router.delete('/:id', restrictTo('employee'), validRepairById, cancelRepair);
 
 module.exports = { repairRouter: router };
